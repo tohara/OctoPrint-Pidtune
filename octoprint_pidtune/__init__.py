@@ -48,6 +48,7 @@ class PidtunePlugin(octoprint.plugin.SettingsPlugin,
 				type="github_commit",
 				user="tohara",
 				repo="OctoPrint-Pidtune",
+                #branch="dev",
 				current=self._plugin_version,
 
 				# update method: pip

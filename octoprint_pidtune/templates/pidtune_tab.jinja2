@@ -5,7 +5,7 @@
 
 
 <!-- Setup Panel -->
-<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser">
+<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser() && isOperational() && !isPrinting()">
     <h1>Setup</h1>
     
     <div>     
@@ -37,11 +37,16 @@
 </div>
 
 <!-- Control Panel -->
-<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser">
+<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser() && isOperational() && !isPrinting()">
     <h1>Control</h1>
+    <p>	
+		<h5>
+			State: <span class="text-info" data-bind="text : pidAutoState"></span>
+		</h5>
+	</p>
     
     <p>   
-    	<button class="btn btn-block" data-bind="click: function() { $root.autoBtn() }">Start Autotuning</button>
+    	<button class="btn btn-block" data-bind="click: function() { $root.autoBtn() }, enable: pidAutoState() != 'Running'">Start Autotuning</button>
 	</p>
 
 	
@@ -63,7 +68,7 @@
 </div>
 
 <!-- PID data Panel -->
-<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser">
+<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser() && isOperational() && !isPrinting()">
     <h1>PID Data</h1>
     
     <p>	

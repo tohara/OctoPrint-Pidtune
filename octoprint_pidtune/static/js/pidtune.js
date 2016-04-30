@@ -45,7 +45,7 @@ $(function() {
         self.cycles = ko.observable("8");
         self.stepSize = ko.observable("10");
         
-        self.pidAutoRunning = ko.observable(false);
+        self.pidAutoState = ko.observable("Ready");
         
         self.updatePidDataK = function(newValue) {
         	self.pidData.kp(self.pidData.kpCo());
@@ -144,7 +144,7 @@ $(function() {
         		break;
         	
         	}
-        	self.pidAutoRunning(true);
+        	self.pidAutoState("Running");
         };
         
         self.manualBtn = function() {
@@ -285,7 +285,8 @@ $(function() {
             var reBedlPid = /^Recv:\s+echo:\s+M304\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*/;
             var reTuneStat = /^Recv:\s+bias:\s*(\d+\.?\d*)\s+d:\s*(\d+\.?\d*)\s+min:\s*(\d+\.?\d*)\s+max:\s*(\d+\.?\d*).*/;
             var reTuneParam = /^Recv:\s+Ku:\s*(\d+\.?\d*)\s+Tu:\s*(\d+\.?\d*).*/;
-            var reTuneComplete = /^Recv:\s+PID Autotune finished|PID Autotune failed.*/;
+            var reTuneComplete = /^Recv:\s+PID Autotune finished.*/;
+            var reTuneFailed = /^Recv:\s+PID Autotune failed.*/;
             
             //var commandMatch = command.match(re);
         	//Recv:\s+echo:\s+M301\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*
@@ -332,7 +333,12 @@ $(function() {
             	
             	logsMatch = data[i].match(reTuneComplete);
             	if (logsMatch != null) {
-            		self.pidAutoRunning(false);
+            		self.pidAutoState("Completed");
+            	}
+            	
+            	logsMatch = data[i].match(reTuneFailed);
+            	if (logsMatch != null) {
+            		self.pidAutoState("Failed");
             	}
             	
             	if (self.selectedController() == "Bed") {
