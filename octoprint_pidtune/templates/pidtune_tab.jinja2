@@ -1,0 +1,130 @@
+
+<div class="row-fluid">	
+		<div id="pidtune-graph" class="pidtune-placeholder"></div>
+</div>
+
+
+<!-- Setup Panel -->
+<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser">
+    <h1>Setup</h1>
+    
+    <div>     
+    	 <select id="pidtune-selectedController" data-bind="options: tempControllers, value: selectedController"></select>
+    </div>
+    <div>
+    	<p>	
+			<h5>
+				Target: <input type="text" id="auto-target" class="valueInput" style="width: 50px" data-bind="value : target" />
+			</h5>
+		</p>
+		<p>	
+			<h5>		
+		 		
+				Cycles: <input type="text" id="cycle" class="valueInput" style="width: 50px" data-bind="value : cycles" />
+			</h5>
+		</p>
+	</div> 
+	<h2>Manual</h2>
+	
+	<div>
+    	<p>	
+			<h5>
+				Step: <input type="text" id="step-target" class="valueInput" style="width: 50px" data-bind="value : stepSize" />
+			</h5>
+		</p>
+	</div> 
+    
+</div>
+
+<!-- Control Panel -->
+<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser">
+    <h1>Control</h1>
+    
+    <p>   
+    	<button class="btn btn-block" data-bind="click: function() { $root.autoBtn() }">Start Autotuning</button>
+	</p>
+
+	
+	<h2>Manual</h2>
+	<div>
+		<p>   
+	    	<button class="btn btn-block" data-bind="click: function() { $root.manualBtn() }">Set Target</button>
+		</p>
+		<p>   
+	    	<button class="btn" style="width: 48%" data-bind="click: function() { $root.incBtn() }">Inc</button>
+	    	<button class="btn" style="width: 48%" data-bind="click: function() { $root.decBtn() }">Dec</button>
+		</p>
+		<p>   
+	    	<button class="btn btn-block" data-bind="click: function() { $root.offBtn() }">Off</button>
+		</p>
+    </div>
+    
+    
+</div>
+
+<!-- PID data Panel -->
+<div class="pid-panel" style="display: none;" data-bind="visible: loginState.isUser">
+    <h1>PID Data</h1>
+    
+    <p>	
+		<h5>
+			Bias: <span id="bias" class="text-info" data-bind="text : pidData.bias()"></span>
+		</h5>
+	</p>
+	<p>		
+		<h5>
+			Min: <span id="min" class="text-info" data-bind="text : pidData.min() + '&deg;C'"></span>
+			
+			Max: <span id="min" class="text-info" data-bind="text : pidData.max() + '&deg;C'"></span>
+		</h5>
+	</p>
+	<p>		
+		<h5>
+			Ku: <span id="min" class="text-info" data-bind="text : pidData.ku()"></span>
+
+			Tu: <span id="min" class="text-info" data-bind="text : pidData.tu()"></span>
+		</h5>
+	</p>
+	
+	<p>
+		
+		Kp: <input type="text" id="Kp" class="valueInput" name="Kp" style="width: 50px" data-bind="value : pidData.kp" />
+	</p>	
+	<p>	
+		
+		Ki: <input type="text" id="Ki" class="valueInput" name="Ki" style="width: 50px" data-bind="value : pidData.ki" />
+		
+		Ti: <input type="text" id="Ti" class="valueInput" name="Ti" style="width: 50px" data-bind="value : pidData.ti" />
+	</p>	
+	<p>	
+		Kd: <input type="text" id="Kd" class="valueInput" name="Kd" style="width: 50px" data-bind="value : pidData.kd" />
+		
+		Td: <input type="text" id="Td" class="valueInput" name="Td" style="width: 50px" data-bind="value : pidData.td" />
+	</p>	
+
+	<p>
+		<form>
+			<h5>
+				<input type="radio" name="pid-type" value="cl" data-bind="checked: pidData.model"> Classic PID
+				<br>
+				<input type="radio" name="pid-type" value="pe" data-bind="checked: pidData.model"> Pessen Integral Rule
+				<br>
+				<input type="radio" name="pid-type" value="so" data-bind="checked: pidData.model"> Some Overshoot
+				<br>
+				<input type="radio" name="pid-type" value="no" data-bind="checked: pidData.model"> No Overshoot
+				<br>
+			</h5>
+		</form>
+		
+	</p>
+	<p>   
+	    	<button class="btn btn-block " data-bind="click: function() { $root.currentBtn() }">Get Current</button>
+	</p>
+	<p>   
+	    	<button class="btn" style="width: 48%" data-bind="click: function() { $root.applyBtn() }">Apply</button>
+	    	<button class="btn" style="width: 48%" data-bind="click: function() { $root.saveBtn() }, enable: selectedController() != 'Bed'">Save</button>
+	</p>
+    
+    
+    
+</div>
