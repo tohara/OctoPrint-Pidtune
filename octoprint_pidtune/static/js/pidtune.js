@@ -246,36 +246,34 @@ $(function() {
         self.fromCurrentData = function(data) {
         	//console.log(data);
         	self._processStateData(data.state);
-        	self._processTempData(data.temps);
+        	self._processTempData(data.serverTime, data.temps);
         	self._processLogsData(data.logs);
         	
         	self.updatePlot();
         };
         
-        self._processTempData = function (data) {
+        self._processTempData = function (serverTime, data) {
+        	var clientTime = Date.now();
         	
         	for (var i = 0; i < data.length; i++) {
+        		var timeDiff = (serverTime - data[i].time) * 1000;
+                var time = clientTime - timeDiff;
         		
-        		var obj = [Number(data[i].time), parseFloat(data[i][self.selectedController().toLowerCase()].actual)];
+        		var objActual = [time, parseFloat(data[i][self.selectedController().toLowerCase()].actual)];
+        		var objTarget = [time, parseFloat(data[i][self.selectedController().toLowerCase()].target)];
         		
         		if(self.actTemp.length >= self.max_plot){
         			self.actTemp.shift();
         		}
-        	
-        		self.actTemp.push(obj);
-        	}
-        	
-        	for (var i = 0; i < data.length; i++) {
-        		
-        		var obj = [Number(data[i].time), parseFloat(data[i][self.selectedController().toLowerCase()].target)];
         		
         		if(self.targetTemp.length >= self.max_plot){
         			self.targetTemp.shift();
         		}
-        		
-        		self.targetTemp.push(obj);
-        	}
         	
+        		self.actTemp.push(objActual);
+        		self.targetTemp.push(objTarget);
+        	}
+        	        	
         };
         
         self._processLogsData = function (data) {
