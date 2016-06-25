@@ -220,8 +220,10 @@ $(function() {
         	switch (self.selectedController()) {
         	
         	case "Tool0":
+        		self.sendCommand("M301 E0 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
+        		break;
         	case "Tool1":
-        		self.sendCommand("M301 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
+        		self.sendCommand("M301 E1 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
         		break;
         	case "Bed":
         		self.sendCommand("M304 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
@@ -237,6 +239,19 @@ $(function() {
 		
 		self.currentBtn = function() {
 			self.sendCommand("M503");
+			switch (self.selectedController()) {
+        	
+        	case "Tool0":
+        		self.sendCommand("M301 E0");
+        		break;
+        	case "Tool1":
+        		self.sendCommand("M301 E1");
+        		break;
+        	case "Bed":
+        		self.sendCommand("M304");
+        		break;
+        	
+        	}
 		
 		};
 
@@ -279,6 +294,7 @@ $(function() {
         self._processLogsData = function (data) {
         	//console.log(data);
         	
+        	var rePid = /^Recv:\s+echo:\s+(?:e:\d+\s+)?p:(\d+\.?\d*)\s+i:(\d+\.?\d*)\s+d:(\d+\.?\d*).*/;
             var reToolPid = /^Recv:\s+echo:\s+M301\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*/;
             var reBedlPid = /^Recv:\s+echo:\s+M304\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*/;
             var reTuneStat = /^Recv:\s+bias:\s*(\d+\.?\d*)\s+d:\s*(\d+\.?\d*)\s+min:\s*(\d+\.?\d*)\s+max:\s*(\d+\.?\d*).*/;
@@ -357,6 +373,15 @@ $(function() {
                 	}
             		
             	}
+            	
+            	logsMatch = data[i].match(rePid);
+            	if (logsMatch != null) {
+            		self.pidData.kp(logsMatch[1]);
+            		self.pidData.ki(logsMatch[2]);
+            		self.pidData.kd(logsMatch[3]);
+            	}
+            	
+            
 
         	}
             
