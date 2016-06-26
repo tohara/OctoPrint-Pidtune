@@ -47,6 +47,37 @@ $(function() {
         
         self.pidAutoState = ko.observable("Ready");
         
+        self._printerProfileUpdated = function() {
+            
+        	var tempArray = [];
+            
+
+            // tools
+            var numExtruders = self.settingsViewModel.printerProfiles.currentProfileData().extruder.count();
+            if (numExtruders) {
+               
+                for (var extruder = 0; extruder < numExtruders; extruder++) {
+                   tempArray.push('Tool' + extruder);
+                }
+            } 
+
+            console.log('Heated bed:');
+            // print bed
+            if (self.settingsViewModel.printerProfiles.currentProfileData().heatedBed()) {
+            	tempArray.push('Bed');
+            	
+            }
+            
+            self.tempControllers(tempArray);
+
+        };
+        
+        self.settingsViewModel.printerProfiles.currentProfileData.subscribe(function() {
+            self._printerProfileUpdated();
+            self.settingsViewModel.printerProfiles.currentProfileData().extruder.count.subscribe(self._printerProfileUpdated);
+            self.settingsViewModel.printerProfiles.currentProfileData().heatedBed.subscribe(self._printerProfileUpdated());
+        });
+        
         self.updatePidDataK = function(newValue) {
         	self.pidData.kp(self.pidData.kpCo());
         	self.pidData.ki(self.pidData.kiCo());
@@ -131,105 +162,78 @@ $(function() {
         
         
         self.autoBtn = function() {
-        	switch (self.selectedController()) {
-        	
-        	case "Tool0":
-        		self.sendCommand("M303 E0 S" + self.target() + " C" + self.cycles());
-        		break;
-        	case "Tool1":
-        		self.sendCommand("M303 E1 S" + self.target() + " C" + self.cycles());
-        		break;
-        	case "Bed":
-        		self.sendCommand("M303 E-1 S" + self.target() + " C" + self.cycles());
-        		break;
-        	
+        	if (self.selectedController().slice(0,4) == 'Tool') {
+        			self.sendCommand("M303 E" + self.selectedController().slice(4,5) + " S" + self.target() + " C" + self.cycles());
+        			
+        	}else if (self.selectedController() == 'Bed') {
+        			self.sendCommand("M303 E-1 S" + self.target() + " C" + self.cycles());
+        			
         	}
+        	
         	self.pidAutoState("Running");
         };
         
         self.manualBtn = function() {
-        	switch (self.selectedController()) {
         	
-        	case "Tool0":
-        		self.sendCommand("M104 T0 S" + self.target());
-        		break;
-        	case "Tool1":
-        		self.sendCommand("M104 T1 S" + self.target());
-        		break;
-        	case "Bed":
-        		self.sendCommand("M140 S" + self.target());
-        		break;
-        	
+        	if (self.selectedController().slice(0,4) == 'Tool') {
+        			self.sendCommand("M104 T" + self.selectedController().slice(4,5) + " S" + self.target());
+        			
+        	}else if (self.selectedController() == 'Bed') {
+        			self.sendCommand("M140 S" + self.target());
+        			
         	}
+        	
         };
         
         self.incBtn = function() {
         	var newTarget = parseFloat(self.currentTargetTemp) + parseFloat(self.stepSize());
         	
-        	switch (self.selectedController()) {
-        	
-        	case "Tool0":
-        		self.sendCommand("M104 T0 S" + newTarget);
-        		break;
-        	case "Tool1":
-        		self.sendCommand("M104 T1 S" + newTarget);
-        		break;
-        	case "Bed":
-        		self.sendCommand("M140 S" + newTarget);
-        		break;
-        	
+        	if (self.selectedController().slice(0,4) == 'Tool') {
+        			self.sendCommand("M104 T" + self.selectedController().slice(4,5) + " S" + newTarget);
+        			
+        	}else if (self.selectedController() == 'Bed') {
+        			self.sendCommand("M140 S" + newTarget);
+        			
         	}
+        	
         	
         };
         
         self.decBtn = function() {
         	var newTarget = parseFloat(self.currentTargetTemp) - parseFloat(self.stepSize());
         	
-        	switch (self.selectedController()) {
-        	
-        	case "Tool0":
-        		self.sendCommand("M104 T0 S" + newTarget);
-        		break;
-        	case "Tool1":
-        		self.sendCommand("M104 T1 S" + newTarget);
-        		break;
-        	case "Bed":
-        		self.sendCommand("M140 S" + newTarget);
-        		break;
-        	
+        	if (self.selectedController().slice(0,4) == 'Tool') {
+        			self.sendCommand("M104 T" + self.selectedController().slice(4,5) + " S" + newTarget);
+        			
+        	}else if (self.selectedController() == 'Bed') {
+        			self.sendCommand("M140 S" + newTarget);
+        			
         	}
         };
         
         self.offBtn = function() {
-        	switch (self.selectedController()) {
         	
-        	case "Tool0":
-        		self.sendCommand("M104 T0 S0" );
-        		break;
-        	case "Tool1":
-        		self.sendCommand("M104 T1 S0");
-        		break;
-        	case "Bed":
-        		self.sendCommand("M140 S0");
-        		break;
-        	
+        	if (self.selectedController().slice(0,4) == 'Tool') {
+        			self.sendCommand("M104 T" + self.selectedController().slice(4,5) + " S0");
+        			
+        	}else if (self.selectedController() == 'Bed') {
+        			self.sendCommand("M140 S0");
+        			
         	}
+        	
+        	
         };
         
         self.applyBtn = function() {
-        	switch (self.selectedController()) {
         	
-        	case "Tool0":
-        		self.sendCommand("M301 E0 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
-        		break;
-        	case "Tool1":
-        		self.sendCommand("M301 E1 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
-        		break;
-        	case "Bed":
-        		self.sendCommand("M304 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
-        		break;
-        	
-        	}	
+        	if (self.selectedController().slice(0,4) == 'Tool') {
+        			self.sendCommand("M301 E" + self.selectedController().slice(4,5) + " P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
+        			
+        	}else if (self.selectedController() == 'Bed') {
+        			self.sendCommand("M304 P" + self.pidData.kp() + " I" + self.pidData.ki() + " D" + self.pidData.kd());
+        			
+        	}
+        		
         };
 
 		self.saveBtn = function() {
@@ -238,20 +242,15 @@ $(function() {
 		};
 		
 		self.currentBtn = function() {
-			self.sendCommand("M503");
-			switch (self.selectedController()) {
-        	
-        	case "Tool0":
-        		self.sendCommand("M301 E0");
-        		break;
-        	case "Tool1":
-        		self.sendCommand("M301 E1");
-        		break;
-        	case "Bed":
-        		self.sendCommand("M304");
-        		break;
-        	
+			
+			if (self.selectedController().slice(0,4) == 'Tool') {
+        			self.sendCommand("M301 E" + self.selectedController().slice(4,5));
+        			
+        	}else if (self.selectedController() == 'Bed') {
+        			self.sendCommand("M304");
+        			
         	}
+		
 		
 		};
 
