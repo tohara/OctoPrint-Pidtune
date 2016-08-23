@@ -297,10 +297,11 @@ $(function() {
             var reToolPid = /^Recv:\s+echo:\s+M301\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*/;
             var reBedlPid = /^Recv:\s+echo:\s+M304\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*/;
             var reTuneStat = /^Recv:\s+bias:\s*(\d+\.?\d*)\s+d:\s*(\d+\.?\d*)\s+min:\s*(\d+\.?\d*)\s+max:\s*(\d+\.?\d*).*/;
-            var reTuneParam = /^Recv:\s+Ku:\s*(\d+\.?\d*)\s+Tu:\s*(\d+\.?\d*).*/;
+            var reTuneParam = /^Recv:.+Ku:\s*(\d+\.?\d*)\s+Tu:\s*(\d+\.?\d*).*/;
             var reTuneComplete = /^Recv:\s+PID Autotune finished.*/;
             var reTuneFailed = /^Recv:\s+PID Autotune failed.*/;
             
+            //from RC6
             //var commandMatch = command.match(re);
         	//Recv:\s+echo:\s+M301\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*
             /*
@@ -322,6 +323,22 @@ $(function() {
 
             Recv: echo:  M301 P29.20 I4.73 D45.33 C100.00 L20
             Recv: echo:  M304 P336.00 I61.00 D462.40
+
+             */
+            
+          //from RC7
+            //var commandMatch = command.match(re);
+        	//Recv:\s+echo:\s+M301\s+P(\d+\.?\d*)\s+I(\d+\.?\d*)\s+D(\d+\.?\d*).*
+            /*
+            Recv:  T:200.4 /0.0 B:25.7 /0.0 T0:200.4 /0.0 T1:28.8 /0.0 @:0 B@:0 @0:0 @1:0
+			Recv:  bias: 94 d: 94 min: 197.58 max: 202.73 Ku: 46.42 Tu: 21.82
+			Recv:  Classic PID
+			Recv:  Kp: 27.85 Ki: 2.55 Kd: 75.99
+			Recv: PID Autotune finished! Put the last Kp, Ki and Kd constants from below into Configuration.h
+			Recv: #define  DEFAULT_Kp 27.85
+			Recv: #define  DEFAULT_Ki 2.55
+			Recv: #define  DEFAULT_Kd 75.99
+			Recv: ok
 
              */
             
